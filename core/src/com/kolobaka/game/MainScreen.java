@@ -2,10 +2,12 @@ package com.kolobaka.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ public class MainScreen implements Screen {
     List<Animation> shipAnimation;
     World world;
     WorldRender worldRender;
+    private long startTime = 0;
 
     @Override
     public void show() {
@@ -38,26 +41,44 @@ public class MainScreen implements Screen {
         //landY[ 6 ] = 800
         //shipX = 2500
         //shipY = 2700
-        World.Point[] points = new World.Point[4];
-        points[0].x = 0;
+        Vector2[] points = new Vector2[4];
+
+        /*points[0].x = 0;
         points[0].y = 100;
         points[1].x = 1000;
         points[1].y = 500;
         points[2].x = 1500;
         points[2].y = 1500;
         points[3].x = 3000;
-        points[3].y = 1000;
+        points[3].y = 1000;*/
 
         World.Surface surface = new World.Surface(points);
-        World.Ship ship = new World.Ship(2500, 2500f, 2700f);
+        World.Ship ship = new World.Ship(20, 2500f, 2700f);
         world = new World(surface, ship);
-        WorldRender worldRender = new WorldRender(world, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        worldRender = new WorldRender(
+                world,
+                Gdx.graphics.getWidth(),
+                Gdx.graphics.getHeight(),
+                shipAnimation,
+                ship,
+                surface);
 
     }
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        long timeSince = TimeUtils.timeSinceNanos(startTime);
+        long timeMills = TimeUtils.nanosToMillis(timeSince);
+        if(timeMills > 100) {
+            world.iterate(4, 0);
+
+            startTime = TimeUtils.nanoTime();
+        }
+
+        worldRender.render(delta);
     }
 
     @Override
