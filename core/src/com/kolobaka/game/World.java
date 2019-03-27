@@ -3,107 +3,92 @@ package com.kolobaka.game;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.lang.Math;
+
 public class World {
-    public final Point G = new Point(0, 3.711f); // Meters per sec squared
+    // World's physocs laws
+    public final static float G = 3.711f; // Meters per sec squared
     public final static int HEIGHT = 3000;
     public final static int WIDHT = 7000;
+    public final static int MAX_ANGLE = 90;
+    public final static int MAX_ANGLE_CHANGE_PER_TICK = 15;
+    public final static int MAX_THRUST = 4;
+    public final static int MIN_THRUST = 0;
+    public final static int MAX_THRUST_CHANGE_PER_TICK = 1;
+    public final static int MAX_LANDING_ANGLE = 0;
+    public final static int MAX_LANDING_SPEED_H = 20;
+    public final static int MAX_LANDING_SPEED_V = 40;
 
-    private Surface surface;
-    private Ship ship;
 
-    private long startTime = 0;
+    public static Surface surface;
+    public static Ship ship;
 
-    public World( Surface surface, Ship ship) {
+    public World( Surface surface, Ship ship ) {
         this.surface = surface;
         this.ship = ship;
     }
 
-    public void itterate(){
-        //sum GVector + AVector + AEngineVector
-        //get new point
-        //wait sec
+    public void iterate( int thrust, int rotation ){
+	// Calculate resulting thrust and angle
+	
+	// Do not allow rotation larger than the limit
+	int angleChange = Math.min(Math.abs(rotation), MAX_ANGLE_CHANGE_PER_TICK) * Integer.signum(rotation);
+	// Do not allow thrust change larger the the limit
+	int thrustChange = Math.min(Math.abs(thrust), MAX_THRUST_CHANGE_PER_TICK) * Integer.signum(thurst);
+        	
+	// Calculate rotation change
+	int newRotation = ship.rotation + angleChange;
+	// Ensure rotation does not exceed allowed angles
+	newRotation = Math.max(-MAX_ANGLE, newRotation); // Do not allow tilt larger than -90
+	newRotation = Math.min(MAX_ANGLE, newRotation);  // Do not allow tilt larger than 90
+	ship.rotation = newRotation;
 
-        long timeSince = TimeUtils.timeSinceNanos(startTime);
-        long timeMills = TimeUtils.nanosToMillis(timeSince);
-        if(timeMills > 1000) {
-            ship.a.x = G.x + ship.a.x;
-            ship.a.y = G.y + ship.a.y;
+	// Calculate thrust change
+	int newThrust = ship.thrust + thrustChange;
+	// Ensure thrust does not exceed allowed limits
+	newThrust = Math.max(MIN_THRUST, newThrust);
+	newThrust = Math.min(MAX_THRUST, newThrust);
+	ship.thrust = newThrust;
 
-            startTime = TimeUtils.nanoTime();
-        }
+	// Calculate thrust change
+	int normalizedRotation = ship.rotation + 90; // Normalize rotation regarding SIN circle
+	float thrustV = ship.thrust * Math.sin(normalizedRotation);
+	float thrustH = ship.thurst * Math.cos(normalizedRotation);
 
+	// Calculate speed
+	ship.speed.y = ship.speed.y + thrustV - G;
+	ship.speed.x = ship.speed.x + thrustH;
 
+	// Calculate fuel consumption
+	ship.fuel -= ship.thrust;
+
+	// Calculate position
+	ship.position.x += ship.speed.x;
+	ship.position.y += ship.speed.y;
     }
 
     // Vector G { x: 0, y: 3.711 }
     // Points in the world
-    public static class Ship extends PObject{
-        int fuel;
-        float x;
-        float y;
+    public static class Ship {
+        public int fuel;
+	public int rotation; // <0 counter clockwise, >0 clockwise
+	public int thrust;
+	public Vector2 speed;
+	public Vector2 position;
+
         public Ship(int fuel, float x, float y) {
             this.fuel = fuel;
-            this.x = x;
-            this.y = y;
+	    this.rotation = 0;
+	    this.thrust = 0;
+	    this.speed = new Vector2(0, 0);
+	    this.position = new Vector2(0, 0);
         }
     }
 
-    public static class Surface extends PObject{
-        Point[] point;
-        public Surface(Point[] point) {
-            this.point = point;
-            this.isStatic = true;
-        }
-    }
-
-    public static class PObject{
-        Vector2 a;
-        float vV;
-        float hV;
-
-        public PObject() {
-        }
-
-        public boolean isStatic() {
-            return isStatic;
-        }
-
-        public void setStatic(boolean aStatic) {
-            isStatic = aStatic;
-        }
-
-        boolean isStatic = false;
-
-        public PObject(Vector2 a, float vSpeed, float hSpeed){
-            this.a = a;
-            this.vV = vSpeed;
-            this.hV = hSpeed;
-        }
-    }
-
-    public static class Point{
-        float x;
-        float y;
-
-        public void setX(float x) {
-            this.x = x;
-        }
-
-        public void setY(float y) {
-            this.y = y;
-        }
-
-        public float getX() {
-            return x;
-        }
-
-        public float getY() {
-            return y;
-        }
-
-        public Point(float x, float y) {
-            this.x = x;
-            this.y = y;
+    public static class Surface {
+        Vector2[] points;
+        public Surface(Vector2[] points) {
+            this.points = points;
         }
     }
 }
