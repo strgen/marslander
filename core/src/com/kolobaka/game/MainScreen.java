@@ -41,19 +41,26 @@ public class MainScreen implements Screen {
         //landY[ 6 ] = 800
         //shipX = 2500
         //shipY = 2700
-        Vector2[] points = new Vector2[4];
+        Vector2[] points = new Vector2[7];
 
-        /*points[0].x = 0;
-        points[0].y = 100;
-        points[1].x = 1000;
-        points[1].y = 500;
-        points[2].x = 1500;
-        points[2].y = 1500;
-        points[3].x = 3000;
-        points[3].y = 1000;*/
+        points[0] = new Vector2(0f, 100f);
+        points[1] = new Vector2(1000f, 500f);
+        points[2] = new Vector2(1500f, 1500f);
+        points[3] = new Vector2(3000f, 1000f);
+        points[4] = new Vector2(4000f, 150f);
+        points[5] = new Vector2(5500f, 150f);
+        points[6] = new Vector2(6999f, 800f);
+        /*points[0].x = 0f;
+        points[0].y = 100f;*/
+        /*points[1].x = 1000f;
+        points[1].y = 500f;
+        points[2].x = 1500f;
+        points[2].y = 1500f;
+        points[3].x = 3000f;
+        points[3].y = 1000f;*/
 
         World.Surface surface = new World.Surface(points);
-        World.Ship ship = new World.Ship(20, 2500f, 2700f);
+        World.Ship ship = new World.Ship(2000, 2500f, 2700f);
         world = new World(surface, ship);
         worldRender = new WorldRender(
                 world,
@@ -72,8 +79,8 @@ public class MainScreen implements Screen {
 
         long timeSince = TimeUtils.timeSinceNanos(startTime);
         long timeMills = TimeUtils.nanosToMillis(timeSince);
-        if(timeMills > 100) {
-            world.iterate(4, 0);
+        if(timeMills > 200) {
+            world.iterate(4, -90);
 
             startTime = TimeUtils.nanoTime();
         }

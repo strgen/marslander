@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.List;
@@ -35,8 +36,11 @@ public class WorldRender {
     private World.Ship ship;
     private World.Surface surface;
 
-    private static float shipW = 130 / 8;
-    private static float shipH = 255 / 8;
+    private static float shipW = 128;
+    private static float shipH = 256;
+
+    private static float shipWR = shipW / 8;
+    private static float shipHR = shipH / 8;
 
     List<Animation> shipAnimation;
 
@@ -62,37 +66,58 @@ public class WorldRender {
 
     }
 
-    private Vector2 converCoor(float x, float y){
-        return new Vector2( (x / WW) * Gdx.graphics.getWidth(), (y / WH) * Gdx.graphics.getHeight());
+    private Vector2 converCoor(Vector2 vector2){
+        return new Vector2( (vector2.x / WW) * Gdx.graphics.getWidth(),
+                (vector2.y / WH) * Gdx.graphics.getHeight());
     }
     public void render(float dt)
     {
-        //Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
-        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderShip();
+        renderSurface();
     }
 
     private void renderShip(){
-        spriteBatch.begin();
+
         TextureRegion texture = (TextureRegion)shipAnimation.get(0).getKeyFrame(0, true);
         Sprite shipSprite = new Sprite(texture);
+        shipSprite.setSize(shipWR, shipHR);
+        shipSprite.setOrigin(shipWR / 2, 0 );
 
-        Vector2 vector2 = converCoor(ship.position.x, ship.position.y);
-        spriteBatch.draw(shipSprite, vector2.x - (shipW / 2), vector2.y, shipW, shipH);
+        Vector2 vector2 = converCoor(new Vector2(ship.position.x, ship.position.y));
+
+        shipSprite.setPosition(vector2.x - shipSprite.getOriginX(),
+                vector2.y- shipSprite.getOriginY() );
+
+        //because of fuck you, just joking there is some trick with starting coor system iam pretty sure you'll get
+        shipSprite.setRotation(-ship.rotation);
+
+        spriteBatch.begin();
+        shipSprite.draw(spriteBatch);
         spriteBatch.end();
+
+        /*
+        spriteBatch.begin();
+        spriteBatch.draw(shipSprite, vector2.x - (shipWR / 2), vector2.y, shipWR, shipHR);
+        spriteBatch.end();
+        */
     }
 
-    /*private void renderSurface(){
+    private void renderSurface(){
         ShapeRenderer shapeRenderer = new ShapeRenderer();
         shapeRenderer.setColor(Color.RED);
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        World.Point[] points = surface.point;
+        //World.Point[] points = surface.point;
 
-
-        shapeRenderer.line();
+        for (int i = 1; i < surface.points.length; i++) {
+            Vector2 lineStart = new Vector2(surface.points[i - 1].x, surface.points[i - 1].y);
+            Vector2 lineEnd = new Vector2(surface.points[i].x, surface.points[i].y);
+            shapeRenderer.line(converCoor(lineStart), converCoor(lineEnd));
+        }
 
         shapeRenderer.end();
-    }*/
+    }
 }
