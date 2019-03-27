@@ -47,10 +47,11 @@ public class MainScreen implements Screen {
         points[2].y = 1500;
         points[3].x = 3000;
         points[3].y = 1000;
+
         World.Surface surface = new World.Surface(points);
         World.Ship ship = new World.Ship(2500, 2500f, 2700f);
         world = new World(surface, ship);
-        //WorldRender = new WorldRender();
+        WorldRender worldRender = new WorldRender(world, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
     }
 
