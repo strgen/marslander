@@ -63,7 +63,7 @@ public class World {
         int normalizedRotation = ship.rotation + 90; // Normalize rotation regarding SIN circle
 
         float thrustV = (float) (ship.thrust * Math.sin(Math.toRadians(normalizedRotation)));
-        float thrustH = (float) (ship.thrust * Math.cos(Math.toRadians(normalizedRotation)));
+        float thrustH = -((float) (ship.thrust * Math.cos(Math.toRadians(normalizedRotation))));
 
         // Calculate speed
         ship.speed.y = ship.speed.y + thrustV - G;
@@ -92,15 +92,15 @@ public class World {
         }
     }
 
-    public checkIntersection() {
+    public boolean checkIntersection() {
         int normalizedRotation = ship.rotation + 90;
-        int normalizedRotationRad = Math.toRadians(normalizedRotation);
+        double normalizedRotationRad = Math.toRadians(normalizedRotation);
 
-        float shipEndY = (float) (Math.sin(normalizedRotationRad);
-        float shipEndX = (float) (Math.cos(normalizedRotationRad);
+        float shipEndY = (float) (Math.sin(normalizedRotationRad));
+        float shipEndX = (float) (Math.cos(normalizedRotationRad));
 
-        float shipStart = new Vector2(ship.x, ship.y);
-        float shipEnd = new Vector2(shipEndX, shipEndY);
+        Vector2 shipStart = new Vector2(ship.position.x, ship.position.y);
+        Vector2 shipEnd = new Vector2(shipEndX, shipEndY);
 
         double a1 = shipEnd.y - shipStart.y;
         double b1 = shipStart.x - shipEnd.x;

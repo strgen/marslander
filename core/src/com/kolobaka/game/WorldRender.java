@@ -115,7 +115,10 @@ public class WorldRender {
         for (int i = 1; i < surface.points.length; i++) {
             Vector2 lineStart = new Vector2(surface.points[i - 1].x, surface.points[i - 1].y);
             Vector2 lineEnd = new Vector2(surface.points[i].x, surface.points[i].y);
-            shapeRenderer.line(converCoor(lineStart), converCoor(lineEnd));
+
+            Vector2 rS = converCoor(lineStart);
+            Vector2 rE = converCoor(lineEnd);
+            shapeRenderer.line(rS, rE);
         }
 
         shapeRenderer.end();

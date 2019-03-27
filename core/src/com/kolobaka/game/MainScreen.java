@@ -48,7 +48,7 @@ public class MainScreen implements Screen {
         points[2] = new Vector2(1500f, 1500f);
         points[3] = new Vector2(3000f, 1000f);
         points[4] = new Vector2(4000f, 150f);
-        points[5] = new Vector2(5500f, 150f);
+        points[5] = new Vector2(5500f, 300f);
         points[6] = new Vector2(6999f, 800f);
         /*points[0].x = 0f;
         points[0].y = 100f;*/
@@ -60,7 +60,7 @@ public class MainScreen implements Screen {
         points[3].y = 1000f;*/
 
         World.Surface surface = new World.Surface(points);
-        World.Ship ship = new World.Ship(2000, 2500f, 2700f);
+        World.Ship ship = new World.Ship(2000, 0,2500f, 2700f);
         world = new World(surface, ship);
         worldRender = new WorldRender(
                 world,
@@ -80,7 +80,7 @@ public class MainScreen implements Screen {
         long timeSince = TimeUtils.timeSinceNanos(startTime);
         long timeMills = TimeUtils.nanosToMillis(timeSince);
         if(timeMills > 200) {
-            world.iterate(4, -90);
+            world.iterate(4, 30);
 
             startTime = TimeUtils.nanoTime();
         }
@@ -90,7 +90,7 @@ public class MainScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        //TODO: think implementation 
     }
 
     @Override
