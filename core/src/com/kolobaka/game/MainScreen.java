@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,18 @@ public class MainScreen implements Screen {
         //landY[ 6 ] = 800
         //shipX = 2500
         //shipY = 2700
-        //world = World();
+        World.Point[] points = new World.Point[4];
+        points[0].x = 0;
+        points[0].y = 100;
+        points[1].x = 1000;
+        points[1].y = 500;
+        points[2].x = 1500;
+        points[2].y = 1500;
+        points[3].x = 3000;
+        points[3].y = 1000;
+        World.Surface surface = new World.Surface(points);
+        World.Ship ship = new World.Ship(2500, 2500f, 2700f);
+        world = new World(surface, ship);
         //WorldRender = new WorldRender();
 
     }
@@ -73,6 +85,8 @@ public class MainScreen implements Screen {
     }
     private void LoadShipAnimation(){
         shipAnimation = new ArrayList<Animation>();
+
+        shipAnimation.add(loadAnimation("marslander_sprite.png", 8, 1, 0.1f, new int[]{0, 1, 2, 3 , 4, 5, 6, 7}));
     }
 
     private Animation loadAnimation(  String path, int rows, int columns, float freq, int[] frames )

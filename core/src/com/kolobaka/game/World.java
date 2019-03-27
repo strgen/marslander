@@ -37,15 +37,18 @@ public class World {
 
     // Vector G { x: 0, y: 3.711 }
     // Points in the world
-    public class Ship extends PObject{
+    public static class Ship extends PObject{
         int fuel;
-
-        public Ship(int fuel, Vector2 y) {
+        float x;
+        float y;
+        public Ship(int fuel, float x, float y) {
             this.fuel = fuel;
+            this.x = x;
+            this.y = y;
         }
     }
 
-    public class Surface extends PObject{
+    public static class Surface extends PObject{
         Point[] point;
         public Surface(Point[] point) {
             this.point = point;
@@ -53,7 +56,7 @@ public class World {
         }
     }
 
-    public class PObject{
+    public static class PObject{
         Vector2 a;
         float vV;
         float hV;
@@ -78,7 +81,7 @@ public class World {
         }
     }
 
-    public class Point{
+    public static class Point{
         float x;
         float y;
 
